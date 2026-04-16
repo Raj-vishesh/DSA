@@ -1,15 +1,36 @@
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-        int n = prices.size();
-        int profit = 0;
+    int dp[30001][2];
 
-        for (int i = 1; i < n; i++) {
-            if (prices[i] > prices[i - 1]) {
-                profit += prices[i] - prices[i - 1];
-            }
+    int f(int idx, int buy, vector<int>& prices) {
+        int n = prices.size();
+
+        if (idx == n) return 0;
+
+        if (dp[idx][buy] != -1) {
+            return dp[idx][buy];
         }
 
-        return profit;
+        int profit = 0;
+
+        if (buy) {
+            profit = max(
+                -prices[idx] + f(idx + 1, 0, prices),
+                f(idx + 1, 1, prices)
+            );
+        } 
+        else {
+            profit = max(
+                prices[idx] + f(idx + 1, 1, prices),
+                f(idx + 1, 0, prices)
+            );
+        }
+
+        return dp[idx][buy] = profit;
+    }
+
+    int maxProfit(vector<int>& prices) {
+        memset(dp, -1, sizeof(dp));
+        return f(0, 1, prices);
     }
 };
