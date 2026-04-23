@@ -1,12 +1,17 @@
 class Solution {
 public:
     int numTrees(int n) {
-        long long res = 1;
+        vector<int> dp(n+1 , 0);
 
-        for(int i = 1; i <= n ; i++){
-            res = res * (n+i) / i;
+        dp[0] =1 ;
+        dp[1] =1; 
+
+        for(int node = 2 ; node <= n ; node++){
+            for(int root = 1 ; root <= node ; root++){
+                dp[node] += dp[root -1 ] * dp[node  - root];
+            }
         }
 
-        return res / (n+1);
+        return dp[n];
     }
 };
