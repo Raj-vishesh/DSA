@@ -1,52 +1,52 @@
 class Solution {
 public:
     int networkDelayTime(vector<vector<int>>& times, int n, int k) {
-         vector<vector<pair<int,int>>> adj(n + 1);
+        
+        vector<vector<pair<int,int>>> adj(n);
 
-        for(auto it : times){
-            adj[it[0]].push_back({it[1], it[2]});
+        for(int i = 0; i < times.size() ; i++){
+            int src = times[i][0];
+            int dest = times[i][1];
+            int tm = times[i][2];
+
+            adj[src-1].push_back({dest-1 , tm});
         }
 
-        priority_queue<pair<int ,int> , vector<pair<int,int>> , greater<pair<int,int>>> pq;
-
-        vector<int> dist(n+1 , 1e9);
-
-        dist[k] = 0;
-
-        pq.push({0 , k});
-
-
+        priority_queue<pair<int,int> , vector<pair<int,int>> , greater<pair<int,int>>> pq;
+        vector<int> time(n , 1e9);
+        
+        int start = k-1;
+        time[start] = 0;
+        pq.push({0 , start});
         while(!pq.empty()){
-            auto[d , node] = pq.top();
+            pair<int,int> p = pq.top();
             pq.pop();
 
-            if(d > dist[node] ){
+            int t = p.first;
+            int node = p.second;
+
+            if(t > time[node]){
                 continue;
             }
 
-            for(auto neigh : adj[node]){
-                int adjnode= neigh.first;
-                int wt = neigh.second;
+            for(int i = 0 ; i < adj[node].size() ; i++){
+                int neigh = adj[node][i].first;
+                int tme = adj[node][i].second;
 
-                if(dist[node] + wt < dist[adjnode]){
-                    dist[adjnode] = dist[node]+ wt;
-
-                    pq.push({dist[adjnode] , adjnode});
-                } 
-
-
+                if(t + tme < time[neigh]){
+                    time[neigh] = t + tme;
+                    pq.push({t + tme , neigh});
+                }
             }
-
         }
 
-        int ans = 0;
+        int max_t =  *max_element(time.begin() , time.end());
 
-        for(int i  = 1 ; i <= n ; i++){
-            if(dist[i] == 1e9) return -1;
-            ans = max(ans , dist[i]);
+        if(max_t != 1e9){
+            return max_t;
         }
+        else return -1;
 
 
-        return ans;
     }
 };
