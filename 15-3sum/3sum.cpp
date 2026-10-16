@@ -1,50 +1,34 @@
 class Solution {
 public:
     vector<vector<int>> threeSum(vector<int>& nums) {
-        int n= nums.size();
+        int n = nums.size();
         vector<vector<int>> ans;
-
         sort(nums.begin() , nums.end());
 
-        for(int k = 0 ; k < n-2 ; k++){
-            int i = k+1; 
-            int j = n-1;
+        for(int i = 0 ; i < n-2 ; i++){
+            if(nums[i] > 0) break;      // agar pahla number hi 0 se bada h not possible 
 
-            if(k > 0 && nums[k] == nums[k-1]) continue;
-
-            while(i < j){
-
-                int sum = nums[i]+nums[j]+nums[k];
-
+            // skip duplicate values for 
+            if(i > 0 && nums[i] == nums[i-1]) continue;
+            int l  = i+1 ;
+            int r = n-1;
+            while(l < r){
+                int sum = nums[i] + nums[l]+ nums[r];
                 if(sum == 0){
-                    ans.push_back({nums[k] , nums[i], nums[j]});
-                    i++; 
-                    j--;
-
-
-                    //  Skip Duplicates 
-
-
-                    while(i < j && nums[i] == nums[i-1]) {
-                        i++;
-                    }
-
-                    while(i < j && nums[j] == nums[j+1]){
-                        j--;
-                    }
+                    ans.push_back({nums[i] , nums[l] , nums[r]});
+                    l++;
+                    r--;
+                    while(l < r  && nums[l] == nums[l-1] ) l++;
+                    while(l < r && nums[r] == nums[r+1]) r--;
                 }
 
                 else if(sum < 0){
-
-                    i++;
+                    l++;
                 }
-
                 else{
-                    j--;
+                    r--;
                 }
-
-
-
+ 
             }
         }
 
