@@ -6,9 +6,9 @@ public:
         sort(nums.begin() , nums.end());
 
         for(int i = 0 ; i < n-2 ; i++){
-            //if(nums[i] > 0) break;      // agar pahla number hi 0 se bada h not possible 
+            if(nums[i] > 0) break;      // agar pahla number hi 0 se bada h not possible 
 
-            // skip duplicate values for 
+            // skip duplicate values for 1st element 
             if(i > 0 && nums[i] == nums[i-1]) continue;
             int l  = i+1 ;
             int r = n-1;
