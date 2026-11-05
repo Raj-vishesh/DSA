@@ -1,52 +1,52 @@
 class Solution {
 public:
     int networkDelayTime(vector<vector<int>>& times, int n, int k) {
-        
-        vector<vector<pair<int,int>>> adj(n);
 
-        for(int i = 0; i < times.size() ; i++){
-            int src = times[i][0];
-            int dest = times[i][1];
-            int tm = times[i][2];
+        vector<vector<pair<int,int>>> adj(n + 1);
 
-            adj[src-1].push_back({dest-1 , tm});
+        for(auto &t : times) {
+            adj[t[0]].push_back({t[1], t[2]});
         }
 
-        priority_queue<pair<int,int> , vector<pair<int,int>> , greater<pair<int,int>>> pq;
-        vector<int> time(n , 1e9);
-        
-        int start = k-1;
-        time[start] = 0;
-        pq.push({0 , start});
-        while(!pq.empty()){
-            pair<int,int> p = pq.top();
+        vector<int> dist(n + 1, INT_MAX);
+
+        // Min heap: {distance, node}
+        priority_queue<
+            pair<int,int>,
+            vector<pair<int,int>>,
+            greater<pair<int,int>>
+        > pq;
+
+        dist[k] = 0;
+        pq.push({0, k});
+
+        while(!pq.empty()) {
+
+            auto [d, u] = pq.top();
             pq.pop();
 
-            int t = p.first;
-            int node = p.second;
+            // Ignore outdated entries
+            if(d > dist[u]) continue;
 
-            if(t > time[node]){
-                continue;
-            }
+            for(auto [v, w] : adj[u]) {
 
-            for(int i = 0 ; i < adj[node].size() ; i++){
-                int neigh = adj[node][i].first;
-                int tme = adj[node][i].second;
+                if(dist[v] > d + w) {
 
-                if(t + tme < time[neigh]){
-                    time[neigh] = t + tme;
-                    pq.push({t + tme , neigh});
+                    dist[v] = d + w;
+                    pq.push({dist[v], v});
                 }
             }
         }
 
-        int max_t =  *max_element(time.begin() , time.end());
+        int answer = 0;
 
-        if(max_t != 1e9){
-            return max_t;
+        for(int i = 1; i <= n; i++) {
+
+            if(dist[i] == INT_MAX) return -1;
+
+            answer = max(answer, dist[i]);
         }
-        else return -1;
 
-
+        return answer;
     }
 };
